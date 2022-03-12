@@ -33,6 +33,7 @@ const styles = StyleSheet.create({
   picker: {
     height: 40,
     width: 240,
+    color: '#000000',
   },
   button: {
     flexDirection: 'column',
