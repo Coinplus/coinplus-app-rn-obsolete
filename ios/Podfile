@@ -12,6 +12,8 @@ target 'CoinPlus' do
     :hermes_enabled => false
   )
 
+  pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
+
   target 'CoinPlusTests' do
     inherit! :complete
     # Pods for testing
