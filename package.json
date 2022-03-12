@@ -10,6 +10,8 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "bchaddrjs": "^0.5.2",
+    "coinkey": "^3.0.0",
     "color": "^4.2.1",
     "native-base": "^3.3.7",
     "react": "17.0.2",
