@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { Image, View, StyleSheet } from "react-native";
+import React, {Component} from 'react';
+import {Image, View, StyleSheet} from 'react-native';
 import {
   Container,
   Content,
@@ -9,25 +9,25 @@ import {
   H3,
   Item,
   Icon,
-} from "native-base";
+} from 'native-base';
 
-import { connect } from "react-redux";
+import {connect} from 'react-redux';
 import {
   resetKeysAction,
   updateCurrencyAction,
   updateModeAction,
-} from "../redux/reducers/inputs";
+} from '../redux/reducers/inputs';
 
 const styles = StyleSheet.create({
-  title: { textAlign: "center", color: "#1565c0" },
+  title: {textAlign: 'center', color: '#1565c0'},
   currencyView: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 16,
   },
   deviceView: {
-    flexDirection: "row",
-    justifyContent: "center",
+    flexDirection: 'row',
+    justifyContent: 'center',
     marginTop: 16,
   },
   picker: {
@@ -35,13 +35,13 @@ const styles = StyleSheet.create({
     width: 240,
   },
   button: {
-    flexDirection: "column",
-    alignItems: "center",
+    flexDirection: 'column',
+    alignItems: 'center',
   },
 
   buttonLabel: {
     padding: 8,
-    color: "#2c363f",
+    color: '#2c363f',
   },
   mt48: {
     marginTop: 48,
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
 
 class SelectionScreen extends Component {
   componentDidUpdate() {
-    const { resetKeys } = this.props;
+    const {resetKeys} = this.props;
     resetKeys();
   }
 
@@ -70,7 +70,7 @@ class SelectionScreen extends Component {
       <Container>
         <Content
           padder
-          contentContainerStyle={{ justifyContent: "center", flex: 1 }}
+          contentContainerStyle={{justifyContent: 'center', flex: 1}}
         >
           <H3 style={[styles.title]}>1. SELECT CRYPTO</H3>
           <View style={styles.currencyView}>
@@ -111,7 +111,7 @@ class SelectionScreen extends Component {
           <View style={styles.deviceView}>
             <Button
               transparent
-              onPress={() => navigation.navigate("CardFrontInput")}
+              onPress={() => navigation.navigate('CardFrontInput')}
               style={[
                 styles.button,
                 {
@@ -121,16 +121,16 @@ class SelectionScreen extends Component {
             >
               <View
                 style={{
-                  justifyContent: "center",
+                  justifyContent: 'center',
                   height: buttonImageHeight,
                 }}
               >
-                <Image source={require("../assets/card.png")} />
+                <Image source={require('../assets/card.png')} />
               </View>
               <Text style={styles.buttonLabel}>Card</Text>
             </Button>
             <Button
-              onPress={() => navigation.navigate("BarInput")}
+              onPress={() => navigation.navigate('BarInput')}
               transparent
               style={[
                 styles.button,
@@ -142,11 +142,11 @@ class SelectionScreen extends Component {
             >
               <View
                 style={{
-                  justifyContent: "center",
+                  justifyContent: 'center',
                   height: buttonImageHeight,
                 }}
               >
-                <Image source={require("../assets/bar.png")} />
+                <Image source={require('../assets/bar.png')} />
               </View>
               <Text style={styles.buttonLabel}>Bar</Text>
             </Button>
@@ -158,19 +158,19 @@ class SelectionScreen extends Component {
 }
 
 export default connect(
-  state => ({
-    currency: state.inputs.currency,
-    mode: state.inputs.mode,
-  }),
-  dispatch => ({
-    resetKeys: () => {
-      dispatch(resetKeysAction());
-    },
-    updateCurrency: currency => {
-      dispatch(updateCurrencyAction(currency));
-    },
-    updateMode: mode => {
-      dispatch(updateModeAction(mode));
-    },
-  })
+    (state) => ({
+      currency: state.inputs.currency,
+      mode: state.inputs.mode,
+    }),
+    (dispatch) => ({
+      resetKeys: () => {
+        dispatch(resetKeysAction());
+      },
+      updateCurrency: (currency) => {
+        dispatch(updateCurrencyAction(currency));
+      },
+      updateMode: (mode) => {
+        dispatch(updateModeAction(mode));
+      },
+    }),
 )(SelectionScreen);

@@ -14,6 +14,12 @@ target 'CoinPlus' do
 
   pod 'react-native-randombytes', :path => '../node_modules/react-native-randombytes'
 
+  pod 'RNScrypt', :path => '../node_modules/react-native-scrypt'
+
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
+
+  pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
+
   target 'CoinPlusTests' do
     inherit! :complete
     # Pods for testing

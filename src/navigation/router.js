@@ -1,10 +1,12 @@
 import React from 'react';
 import {Image, Platform} from 'react-native';
-import {createStackNavigator, createAppContainer} from 'react-navigation';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
 
 import SelectionScreen from '../screens/SelectionScreen';
 import CardFrontInputScreen from '../screens/CardFrontInputScreen';
 import CardBackInputScreen from '../screens/CardBackInputScreen';
+import QRScanScreen from '../screens/QRScanScreen';
 import PrivateKeyScreen from '../screens/PrivateKeyScreen';
 import BalanceScreen from '../screens/BalanceScreen';
 
@@ -38,6 +40,9 @@ export default createAppContainer(
           },
           Balance: {
             screen: BalanceScreen,
+          },
+          QRScan: {
+            screen: QRScanScreen,
           },
         },
         {

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, {Component} from 'react';
 import {
   Image,
   Keyboard,
@@ -6,7 +6,7 @@ import {
   View,
   Platform,
   StyleSheet,
-} from "react-native";
+} from 'react-native';
 import {
   Container,
   Content,
@@ -16,19 +16,18 @@ import {
   Button,
   Text,
   Item,
-  Icon,
-} from "native-base";
-import { connect } from "react-redux";
-import NfcManager, { Ndef } from "react-native-nfc-manager";
+} from 'native-base';
+import {connect} from 'react-redux';
+import NfcManager, {Ndef} from 'react-native-nfc-manager';
 
 import {
   resetPublicKeyAction,
   updatePublicKeyAction,
-} from "../redux/reducers/inputs";
-import parseScannedCode from "../util/scannedCodeParser";
-import { isValidAddress } from "../util/generic";
+} from '../redux/reducers/inputs';
+import parseScannedCode from '../util/scannedCodeParser';
+import {isValidAddress} from '../util/generic';
 
-const monospaceFont = Platform.OS === "android" ? "monospace" : "Menlo";
+const monospaceFont = Platform.OS === 'android' ? 'monospace' : 'Menlo';
 
 const originalWidth = 680;
 const originalHeight = 434;
@@ -47,18 +46,18 @@ const VERBOSE = false;
 
 const styles = StyleSheet.create({
   view: {
-    alignSelf: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
     flexGrow: 1,
-    position: "relative",
+    position: 'relative',
   },
   image: {
-    maxWidth: "100%",
-    maxHeight: "100%",
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
   item: {
-    position: "absolute",
-    backgroundColor: "#fff",
+    position: 'absolute',
+    backgroundColor: '#fff',
   },
   textInput: {
     fontFamily: monospaceFont,
@@ -66,13 +65,13 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     paddingLeft: 20,
     paddingRight: 20,
-    textAlignVertical: "center",
+    textAlignVertical: 'center',
   },
   transparentBackground: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   colorWhite: {
-    color: "#fff",
+    color: '#fff',
   },
 });
 
@@ -89,8 +88,8 @@ class CardFrontInputScreen extends Component {
   }
 
   componentDidMount() {
-    NfcManager.isSupported().then(supported => {
-      VERBOSE && console.log("NfcManager.isSupported", supported)
+    NfcManager.isSupported().then((supported) => {
+      VERBOSE && console.log('NfcManager.isSupported', supported);
       if (supported) {
         this.startNfc();
       }
@@ -103,93 +102,92 @@ class CardFrontInputScreen extends Component {
     }
   }
 
-  handleBar = event => {
+  handleBar = (event) => {
     this.setState({
       bar: event.nativeEvent.layout,
       layoutComputed: true,
     });
   };
 
-  onTagDiscovered = tag => {
-    const { updatePublicKey } = this.props;
-    VERBOSE && console.log("onTagDiscovered", tag)
+  onTagDiscovered = (tag) => {
+    const {updatePublicKey} = this.props;
+    VERBOSE && console.log('onTagDiscovered', tag);
     try {
       if (Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_TEXT)) {
         const text = Ndef.text.decodePayload(tag.ndefMessage[0].payload);
         const publicKey = parseScannedCode(text);
         updatePublicKey(publicKey);
       }
-      VERBOSE && console.log("is type uri", Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_URI))
+      VERBOSE && console.log('is type uri', Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_URI));
       if (Ndef.isType(tag.ndefMessage[0], Ndef.TNF_WELL_KNOWN, Ndef.RTD_URI)) {
         const uri = Ndef.uri.decodePayload(tag.ndefMessage[0].payload);
         const publicKey = parseScannedCode(uri);
         updatePublicKey(publicKey);
       }
-      
     } catch (e) {
       VERBOSE && console.log(e);
     }
   };
 
   startDetection = () => {
-    VERBOSE && console.log("startDetection")
+    VERBOSE && console.log('startDetection');
     NfcManager.registerTagEvent(
-      this.onTagDiscovered,
-      "Hold your device over the SOLO card",
-      true
+        this.onTagDiscovered,
+        'Hold your device over the SOLO card',
+        true,
     );
   };
 
   stopDetection = () => {
-    VERBOSE && console.log("stopDetection")
+    VERBOSE && console.log('stopDetection');
     NfcManager.unregisterTagEvent();
   };
 
   startNfc() {
     NfcManager.start()
-      .then(() => {
-        VERBOSE && console.log("Platform.OS", Platform.OS )
-        if (Platform.OS === "android") {
-          NfcManager.isEnabled().then(enabled => {
-            if (enabled) this.startDetection();
-            VERBOSE && console.log("NfcManager.isEnabled", enabled)
-          });
-
-          NfcManager.onStateChanged(event => {
-            if (event.state === "on") {
-              // this.setState({ nfcEnabled: true });
-              this.startDetection();
-            } else if (event.state === "off") {
-              // this.setState({ nfcEnabled: false });
-              this.stopDetection();
-            } else if (event.state === "turning_on") {
-              // do whatever you want
-            } else if (event.state === "turning_off") {
-              // do whatever you want
-            }
-          })
-            .then(sub => {
-              this.stateChangedSubscription = sub;
-            })
-            .catch((/* err */) => {
-              VERBOSE && console.warn(err)
+        .then(() => {
+          VERBOSE && console.log('Platform.OS', Platform.OS );
+          if (Platform.OS === 'android') {
+            NfcManager.isEnabled().then((enabled) => {
+              if (enabled) this.startDetection();
+              VERBOSE && console.log('NfcManager.isEnabled', enabled);
             });
-        } else {
-          this.startDetection();
-        }
-      })
-      .catch(() => {});
+
+            NfcManager.onStateChanged((event) => {
+              if (event.state === 'on') {
+              // this.setState({ nfcEnabled: true });
+                this.startDetection();
+              } else if (event.state === 'off') {
+              // this.setState({ nfcEnabled: false });
+                this.stopDetection();
+              } else if (event.state === 'turning_on') {
+              // do whatever you want
+              } else if (event.state === 'turning_off') {
+              // do whatever you want
+              }
+            })
+                .then((sub) => {
+                  this.stateChangedSubscription = sub;
+                })
+                .catch((/* err */) => {
+                  VERBOSE && console.warn(err);
+                });
+          } else {
+            this.startDetection();
+          }
+        })
+        .catch(() => {});
   }
 
   render() {
-    const { navigation, publicKey, currency, updatePublicKey } = this.props;
-    const { bar, layoutComputed } = this.state;
+    const {navigation, publicKey, currency, updatePublicKey} = this.props;
+    const {bar, layoutComputed} = this.state;
 
     const isValid = isValidAddress(publicKey, currency);
 
     const padding = 12;
-    const { width: windowWidth, height: windowHeight } = Dimensions.get(
-      "window"
+    const {width: windowWidth, height: windowHeight} = Dimensions.get(
+        'window',
     );
 
     let imageWidth = 0;
@@ -210,10 +208,10 @@ class CardFrontInputScreen extends Component {
 
     return (
       <Container>
-        <Content contentContainerStyle={{ flexGrow: 1 }}>
+        <Content contentContainerStyle={{flexGrow: 1}}>
           <View style={styles.view}>
             <Image
-              source={require("../assets/card-front.png")}
+              source={require('../assets/card-front.png')}
               style={[
                 styles.image,
                 {
@@ -245,14 +243,16 @@ class CardFrontInputScreen extends Component {
                   value={publicKey}
                   style={styles.textInput}
                 />
-                <Icon
-                  active
+                <Button
+                  title="fuck"
                   name="md-qr-scanner"
                   onPress={() => {
                     Keyboard.dismiss();
-                    navigation.navigate("QRScan", { qrtype: "card" });
+                    console.log(navigation);
+                    navigation.navigate('QRScan', {qrtype: 'card'});
                   }}
-                />
+                ><Text style={styles.colorWhite}>Next</Text>
+                </Button>
               </Item>
             )}
           </View>
@@ -265,7 +265,7 @@ class CardFrontInputScreen extends Component {
               disabled={!isValid}
               onPress={() => {
                 Keyboard.dismiss();
-                navigation.navigate("Balance");
+                navigation.navigate('Balance');
               }}
             >
               <Text style={styles.colorWhite}>Balance</Text>
@@ -278,7 +278,7 @@ class CardFrontInputScreen extends Component {
               disabled={!isValid}
               onPress={() => {
                 Keyboard.dismiss();
-                navigation.navigate("CardBackInput");
+                navigation.navigate('CardBackInput');
               }}
             >
               <Text style={styles.colorWhite}>Next</Text>
@@ -291,16 +291,16 @@ class CardFrontInputScreen extends Component {
 }
 
 export default connect(
-  state => ({
-    publicKey: state.inputs.publicKey,
-    currency: state.inputs.currency,
-  }),
-  dispatch => ({
-    resetPublicKey: () => {
-      dispatch(resetPublicKeyAction());
-    },
-    updatePublicKey: key => {
-      dispatch(updatePublicKeyAction(key));
-    },
-  })
+    (state) => ({
+      publicKey: state.inputs.publicKey,
+      currency: state.inputs.currency,
+    }),
+    (dispatch) => ({
+      resetPublicKey: () => {
+        dispatch(resetPublicKeyAction());
+      },
+      updatePublicKey: (key) => {
+        dispatch(updatePublicKeyAction(key));
+      },
+    }),
 )(CardFrontInputScreen);
