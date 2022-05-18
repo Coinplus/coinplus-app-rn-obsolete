@@ -1,5 +1,5 @@
 {
-  "name": "CoinPlus",
+  "name": "coinplus-wallet",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -7,6 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "postinstall": "rn-nodeify --install assert,buffer,crypto,events,process,stream,vm,https,url,os,http --hack; jetify",
+    "np": "np --no-publish",
+    "postversion": "react-native-version",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -79,6 +81,8 @@
     "eslint-plugin-react-hooks": "^4.2.1-rc.2-next-72a933d28-20220309",
     "jest": "^27.5.1",
     "metro-react-native-babel-preset": "^0.69.0",
+    "np": "^7.6.1",
+    "react-native-version": "^4.0.0",
     "react-test-renderer": "17.0.2",
     "rn-nodeify": "github:tradle/rn-nodeify"
   },
@@ -137,5 +141,9 @@
     "tty": "tty-browserify",
     "vm": "vm-browserify",
     "tls": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CoinPlus-Wallet/coinplus-app"
   }
 }
