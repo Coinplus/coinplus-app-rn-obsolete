@@ -1,46 +1,46 @@
-import { computeSoloPro, isValidAddress } from "./generic";
+import { computeSoloPro, isValidAddress } from './generic';
 
-jest.mock("react-native-scrypt", () => ({
+jest.mock('react-native-scrypt', () => ({
   __esModule: true,
   default: (secret, salt, N, r, p, dkLen) => {
-    const scrypt = require("scrypt-async"); // eslint-disable-line
+    const scrypt = require('scrypt-async'); // eslint-disable-line
 
     return new Promise(resolve =>
       scrypt(
         secret,
-        "",
+        '',
         {
           N,
           r,
           p,
           dkLen,
-          encoding: "hex",
+          encoding: 'hex',
         },
         derivedKey => {
           resolve(derivedKey);
-        }
-      )
+        },
+      ),
     );
   },
 }));
 
-test("SOLO PRO 1", async () => {
+test('SOLO PRO 1', async () => {
   expect.assertions(2);
 
   const s1pro = {
-    s14: "NvanZYpmZwnvra",
-    s28: "9SZs9uuAdKbhNeKJRigZ1Rfq6ZA7",
+    s14: 'NvanZYpmZwnvra',
+    s28: '9SZs9uuAdKbhNeKJRigZ1Rfq6ZA7',
     index: 1,
   };
 
   const s2pro = {
-    s14: "tvfQqyAqze6gJy",
-    s28: "gYxpJotQhGmQsP78LcUGdQ6yU8RR",
+    s14: 'tvfQqyAqze6gJy',
+    s28: 'gYxpJotQhGmQsP78LcUGdQ6yU8RR',
     index: 2,
   };
 
-  const expectedSecret1 = "cLAv11uvZNRysuXUWptqPTEgiyyC";
-  const expectedSecret2 = "rvWAH8Uh9FVBRn";
+  const expectedSecret1 = 'cLAv11uvZNRysuXUWptqPTEgiyyC';
+  const expectedSecret2 = 'rvWAH8Uh9FVBRn';
 
   const { secret1, secret2 } = await computeSoloPro({ s1pro, s2pro });
 
@@ -48,32 +48,34 @@ test("SOLO PRO 1", async () => {
   expect(secret2).toEqual(expectedSecret2);
 });
 
-test("SOLO PRO 2", async () => {
+test('SOLO PRO 2', async () => {
   expect.assertions(2);
 
   const s1pro = {
-    s14: "zuu7Gq3Lkh7xXU",
-    s28: "sjYweMbyjyLroRQ66FhaDs3ZMjdH",
+    s14: 'zuu7Gq3Lkh7xXU',
+    s28: 'sjYweMbyjyLroRQ66FhaDs3ZMjdH',
     index: 3,
   };
 
   const s2pro = {
-    s14: "84cGqC21mLejrZ",
-    s28: "Ntn59FTJNFqBVCXHjSfg785sWVmy",
+    s14: '84cGqC21mLejrZ',
+    s28: 'Ntn59FTJNFqBVCXHjSfg785sWVmy',
     index: 2,
   };
 
-  const expectedSecret1 = "PDEL939wcpoprkmh1pbsseAVp29k";
-  const expectedSecret2 = "NN2bwuyMndiJZw";
+  const expectedSecret1 = 'PDEL939wcpoprkmh1pbsseAVp29k';
+  const expectedSecret2 = 'NN2bwuyMndiJZw';
 
   const { secret1, secret2 } = await computeSoloPro({ s1pro, s2pro });
 
   expect(secret1).toEqual(expectedSecret1);
   expect(secret2).toEqual(expectedSecret2);
 });
-test("addressValid", () => {
-    expect(isValidAddress("3PoVTfjsApfZe9zkJZQ2c4jHSDYejrMFrV","btc")).toEqual(true)
-    expect(isValidAddress("1NKVxVjZ5tKHcB6ATKW45V6MH2Khf7fGxq","btc")).toEqual(true)
-    
-    
-})
+test('addressValid', () => {
+  expect(isValidAddress('3PoVTfjsApfZe9zkJZQ2c4jHSDYejrMFrV', 'btc')).toEqual(
+    true,
+  );
+  expect(isValidAddress('1NKVxVjZ5tKHcB6ATKW45V6MH2Khf7fGxq', 'btc')).toEqual(
+    true,
+  );
+});

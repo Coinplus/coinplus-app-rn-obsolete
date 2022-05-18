@@ -1,9 +1,9 @@
-import { sha256 } from "js-sha256";
-import { Buffer } from "safe-buffer";
-import bs58 from "bs58";
-import CoinKey from "coinkey";
-import Decimal from "decimal.js";
-import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
+import { sha256 } from 'js-sha256';
+import { Buffer } from 'safe-buffer';
+import bs58 from 'bs58';
+import CoinKey from 'coinkey';
+import Decimal from 'decimal.js';
+import computePrivateKeySec256k1 from './computePrivateKeySec256k1';
 
 export const bitcoinExp = Decimal(10 ** 8);
 
@@ -22,9 +22,13 @@ const getWif = async (secret1B58, secret2B58) => {
   let finalPrivkeyB256;
   Object.keys(formats).forEach(format => {
     if (formats[format].compressed) {
-      toDigest = [...formats[format].first, ...privkeyB256.toArray("be", 32), 1];
+      toDigest = [
+        ...formats[format].first,
+        ...privkeyB256.toArray('be', 32),
+        1,
+      ];
     } else {
-      toDigest = [...formats[format].first, ...privkeyB256.toArray("be", 32)];
+      toDigest = [...formats[format].first, ...privkeyB256.toArray('be', 32)];
     }
     doublesha256 = sha256.digest(sha256.digest(toDigest));
     finalPrivkeyB256 = [...toDigest, ...doublesha256.slice(0, 4)];
@@ -51,10 +55,10 @@ const isValidPublicAddress = address => {
     const decoded = bs58.decode(address);
     if (decoded.length !== 25) return false;
 
-    const checksum = decoded.slice(decoded.length - 4);
+    const checksum = Buffer.from(decoded.slice(decoded.length - 4));
     const body = decoded.slice(0, decoded.length - 4);
     const goodChecksum = Buffer.from(
-      sha256.digest(sha256.digest(body)).slice(0, 4)
+      sha256.digest(sha256.digest(body)).slice(0, 4),
     );
     if (decoded[0] !== 0x00 && decoded[0] !== 0x05) {
       return false;
@@ -65,19 +69,17 @@ const isValidPublicAddress = address => {
   }
 };
 
-const historyURL = "https://live.blockcypher.com/btc/address/";
+const historyURL = 'https://live.blockcypher.com/btc/address/';
 const getBalance = address => {
   return fetch(
-    `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`
+    `https://api.blockcypher.com/v1/btc/main/addrs/${address}/balance`,
   )
     .then(response => {
       return response.json();
     })
     .then(result => {
       return {
-        finalBalance: Decimal(result.final_balance)
-          .div(bitcoinExp)
-          .toString(),
+        finalBalance: Decimal(result.final_balance).div(bitcoinExp).toString(),
         unconfirmedBalance: Decimal(result.unconfirmed_balance)
           .div(bitcoinExp)
           .toString(),
