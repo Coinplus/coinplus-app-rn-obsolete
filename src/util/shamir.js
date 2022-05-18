@@ -1,20 +1,20 @@
-import { Buffer } from "safe-buffer";
-import bs58 from "bs58";
-import BN from "bn.js";
+import { Buffer } from 'safe-buffer';
+import bs58 from 'bs58';
+import BN from 'bn.js';
 
-const modulus14 = new BN("4875194084160298409672797", 10);
+const modulus14 = new BN('4875194084160298409672797', 10);
 const modulus28 = new BN(
-  "23767517358231570773047645414309870043308402671871",
-  10
+  '23767517358231570773047645414309870043308402671871',
+  10,
 );
 
 const b58strToBN = b58str => {
-  const hex = bs58.decode(b58str).toString("hex");
+  const hex = Buffer.from(bs58.decode(b58str)).toString('hex');
   return new BN(hex, 16);
 };
 
 const BNToB58str = bn => {
-  return bs58.encode(bn.toArrayLike(Buffer));
+  return bs58.encode(bn.toBuffer());
 };
 
 const lagrange = (shares, modulus) => {
@@ -47,8 +47,12 @@ export const combine = ([index1, share1], [index2, share2], l = 14) => {
   if (l === 14) modulus = modulus14;
   else if (l === 28) modulus = modulus28;
 
-  const shares = [{ x: x1, y: y1 }, { x: x2, y: y2 }];
+  const shares = [
+    { x: x1, y: y1 },
+    { x: x2, y: y2 },
+  ];
   const secretInt = lagrange(shares, modulus);
   const b58Secret = BNToB58str(secretInt);
+
   return b58Secret;
 };

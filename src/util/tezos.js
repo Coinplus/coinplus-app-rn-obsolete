@@ -1,15 +1,15 @@
-import { sha256 } from "js-sha256";
-import { Buffer } from "safe-buffer";
-import bs58 from "bs58";
-import CoinKey from "coinkey";
-import blake2 from "blakejs";
-import crypto from "crypto";
-import { base58encode, base256decode } from "./generic";
-import Decimal from "decimal.js";
+import { sha256 } from 'js-sha256';
+import { Buffer } from 'safe-buffer';
+import bs58 from 'bs58';
+import CoinKey from 'coinkey';
+import blake2 from 'blakejs';
+import crypto from 'crypto';
+import { base58encode, base256decode } from './generic';
+import Decimal from 'decimal.js';
 
 export const tezosExp = Decimal(10 ** 6);
 
-import Bitcoin from "./bitcoin";
+import Bitcoin from './bitcoin';
 
 const getWifXTZ = async (secret1B58, secret2B58) => {
   const { bitcoin, tezos } = await Bitcoin.getWif(secret1B58, secret2B58);
@@ -20,17 +20,12 @@ const getPublicKeyFromWif = wif => {
   const ck = CoinKey.fromWif(wif);
   const pbuf = new Uint8Array(23);
   const addressB256 = new Uint8Array(27);
-  const puKeyHash = blake2.blake2b(ck.publicKey, "", 20);
+  const puKeyHash = blake2.blake2b(ck.publicKey, '', 20);
   pbuf.set([6, 161, 161], 0);
   pbuf.set(puKeyHash, 3);
   const sha2 = crypto
-    .createHash("sha256")
-    .update(
-      crypto
-        .createHash("sha256")
-        .update(pbuf)
-        .digest()
-    )
+    .createHash('sha256')
+    .update(crypto.createHash('sha256').update(pbuf).digest())
     .digest();
   addressB256.set(pbuf, 0);
   addressB256.set(sha2.slice(0, 4), 23);
@@ -42,10 +37,10 @@ const isValidPublicAddress = address => {
   if (!address) return false;
   try {
     const decoded = bs58.decode(address);
-    const checksum = decoded.slice(decoded.length - 4);
+    const checksum = Buffer.from(decoded.slice(decoded.length - 4));
     const body = decoded.slice(0, decoded.length - 4);
     const goodChecksum = Buffer.from(
-      sha256.digest(sha256.digest(body)).slice(0, 4)
+      sha256.digest(sha256.digest(body)).slice(0, 4),
     );
     if (decoded[0] !== 6) {
       return false;
@@ -62,21 +57,22 @@ const isValidPublicAddress = address => {
   }
 };
 
-
-
 const getBalance = address => {
   return fetch(`https://api.tzkt.io/v1/accounts/${address}`)
     .then(response => {
       return response.json();
     })
     .then(result => {
-      if (result.type === "empty"){
-        return { finalBalance: "0", unconfirmedBalance: "0" };
+      if (result.type === 'empty') {
+        return { finalBalance: '0', unconfirmedBalance: '0' };
       }
-      return { finalBalance: Decimal(result.balance).div(tezosExp).toString(), unconfirmedBalance: "0" };
+      return {
+        finalBalance: Decimal(result.balance).div(tezosExp).toString(),
+        unconfirmedBalance: '0',
+      };
     });
 };
-const historyURL = "https://tzkt.io/";
+const historyURL = 'https://tzkt.io/';
 
 export default {
   getWifXTZ,
