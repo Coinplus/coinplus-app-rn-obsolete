@@ -1,9 +1,9 @@
-import { sha256 } from "js-sha256";
-import { Buffer } from "safe-buffer";
-import bs58 from "bs58";
-import CoinKey from "coinkey";
+import { sha256 } from 'js-sha256';
+import { Buffer } from 'safe-buffer';
+import bs58 from 'bs58';
+import CoinKey from 'coinkey';
 
-import Bitcoin from "./bitcoin";
+import Bitcoin from './bitcoin';
 
 const getWifLTC = async (secret1B58, secret2B58) => {
   const { litecoin } = await Bitcoin.getWif(secret1B58, secret2B58);
@@ -25,10 +25,10 @@ const isValidPublicAddress = address => {
     const decoded = bs58.decode(address);
     if (decoded.length !== 25) return false;
 
-    const checksum = decoded.slice(decoded.length - 4);
+    const checksum = Buffer.from(decoded.slice(decoded.length - 4));
     const body = decoded.slice(0, decoded.length - 4);
     const goodChecksum = Buffer.from(
-      sha256.digest(sha256.digest(body)).slice(0, 4)
+      sha256.digest(sha256.digest(body)).slice(0, 4),
     );
     if (decoded[0] !== 0x30) {
       return false;
@@ -41,7 +41,7 @@ const isValidPublicAddress = address => {
 
 const getBalance = address => {
   return fetch(
-    `https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`
+    `https://api.blockcypher.com/v1/ltc/main/addrs/${address}/balance`,
   )
     .then(response => {
       return response.json();
@@ -53,7 +53,7 @@ const getBalance = address => {
       };
     });
 };
-const historyURL = "https://live.blockcypher.com/ltc/address/";
+const historyURL = 'https://live.blockcypher.com/ltc/address/';
 
 export default {
   getWifLTC,

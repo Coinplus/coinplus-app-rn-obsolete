@@ -1,7 +1,11 @@
-import util from "ethereumjs-util";
-import { Buffer } from "safe-buffer";
-import computePrivateKeySec256k1 from "./computePrivateKeySec256k1";
-import Decimal from "decimal.js";
+import {
+  isValidChecksumAddress,
+  privateToAddress,
+  bufferToHex,
+} from 'ethereumjs-util';
+import { Buffer } from 'safe-buffer';
+import computePrivateKeySec256k1 from './computePrivateKeySec256k1';
+import Decimal from 'decimal.js';
 
 const ethereumExp = Decimal(10 ** 18);
 
@@ -15,8 +19,8 @@ const getPrivateKey = async (secret1B58, secret2B58) => {
 };
 
 const getAddressKey = privateKey => {
-  const privateKeyBuffer = Buffer.from(privateKey, "hex");
-  const addressKey = util.bufferToHex(util.privateToAddress(privateKeyBuffer));
+  const privateKeyBuffer = Buffer.from(privateKey, 'hex');
+  const addressKey = bufferToHex(privateToAddress(privateKeyBuffer));
   return addressKey;
 };
 
@@ -25,24 +29,22 @@ const isPublicAddressDerivedFromPrivateKey = (publicAddress, privateKey) => {
   return publicAddress.toLowerCase() === getAddressKey(privateKey);
 };
 
-const isValidPublicAddress = address => util.isValidChecksumAddress(address);
-const historyURL = "https://live.blockcypher.com/eth/address/";
+const isValidPublicAddress = address => isValidChecksumAddress(address);
+const historyURL = 'https://live.blockcypher.com/eth/address/';
 
 const getBalance = address => {
   return fetch(
-    `https://api.blockcypher.com/v1/eth/main/addrs/${address}/balance`
+    `https://api.blockcypher.com/v1/eth/main/addrs/${address}/balance`,
   )
     .then(response => {
       return response.json();
     })
     .then(result => {
       return {
-        finalBalance: Decimal(result.final_balance)
-        .div(ethereumExp)
-        .toString(),
+        finalBalance: Decimal(result.final_balance).div(ethereumExp).toString(),
         unconfirmedBalance: Decimal(result.unconfirmed_balance)
-        .div(ethereumExp)
-        .toString(),
+          .div(ethereumExp)
+          .toString(),
       };
     });
 };
@@ -54,5 +56,5 @@ export default {
   isValidPublicAddress,
   isPublicAddressDerivedFromPrivateKey,
   historyURL,
-  ethereumExp
+  ethereumExp,
 };
