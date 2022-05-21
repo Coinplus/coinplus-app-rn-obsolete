@@ -1,14 +1,9 @@
 import React, {Component} from 'react';
-import {Image, View, StyleSheet} from 'react-native';
+import {View, StyleSheet, Text,TouchableOpacity} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
-  Container,
-  Content,
-  Button,
-  Text,
   Picker,
-  H3,
   Item,
-  Icon,
 } from 'native-base';
 
 import {connect} from 'react-redux';
@@ -19,7 +14,12 @@ import {
 } from '../redux/reducers/inputs';
 
 const styles = StyleSheet.create({
-  title: {textAlign: 'center', color: '#1565c0'},
+  title: {
+    textAlign: 'center',
+    color: '#1565c0',
+    fontSize: 20,
+    fontWeight:"bold"
+  },
   currencyView: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -32,10 +32,12 @@ const styles = StyleSheet.create({
   },
   picker: {
     height: 40,
-    width: 240,
+    width: 180,
+
     color: '#000000',
   },
   button: {
+    padding: 9,
     flexDirection: 'column',
     alignItems: 'center',
   },
@@ -68,92 +70,68 @@ class SelectionScreen extends Component {
     const buttonGutter = 48;
 
     return (
-      <Container>
-        <Content
-          padder
-          contentContainerStyle={{justifyContent: 'center', flex: 1}}
-        >
-          <H3 style={[styles.title]}>1. SELECT CRYPTO</H3>
-          <View style={styles.currencyView}>
-            <Item picker style={styles.picker}>
-              <Picker
+      <View style={{
+        flexDirection: "column",
+        alignItems:"center",
+        justifyContent:"center",
+        height: "100%",
+        width: "100%"
+      }}>
+        <View >
+          <Text style={styles.title}>1. SELECT CRYPTO</Text>
+          <View style={{display:"flex",
+          alignItems:"center"}}>
+          <Item picker style={styles.picker}>
+            <Picker
                 mode="dropdown"
                 iosHeader="Select crypto"
-                iosIcon={<Icon name="ios-arrow-down" />}
                 selectedValue={currency}
                 onValueChange={updateCurrency}
                 style={styles.picker}
-              >
-                <Picker.Item label="Bitcoin BTC" value="btc" />
-                <Picker.Item label="Bitcoin Cash BCH" value="bch" />
-                <Picker.Item label="Litecoin LTC" value="ltc" />
-                <Picker.Item label="Ethereum ETH" value="eth" />
-                <Picker.Item label="Tezos XTZ" value="xtz" />
-              </Picker>
-            </Item>
+            >
+              <Picker.Item label="Bitcoin BTC" value="btc" />
+              <Picker.Item label="Bitcoin Cash BCH" value="bch" />
+              <Picker.Item label="Litecoin LTC" value="ltc" />
+              <Picker.Item label="Ethereum ETH" value="eth" />
+              <Picker.Item label="Tezos XTZ" value="xtz" />
+            </Picker>
+          </Item>
           </View>
-          <H3 style={[styles.title, styles.mt48]}>2. SELECT MODE</H3>
-          <View style={styles.currencyView}>
-            <Item picker style={styles.picker}>
-              <Picker
+        </View>
+        <View>
+          <Text style={styles.title}>2. SELECT MODE</Text>
+          <View style={{display:"flex",
+            alignItems:"center"}}>
+          <Item picker style={styles.picker}>
+            <Picker
                 mode="dropdown"
                 iosHeader="Select mode"
-                iosIcon={<Icon name="ios-arrow-down" />}
                 selectedValue={mode}
                 onValueChange={updateMode}
                 style={styles.picker}
-              >
-                <Picker.Item label="SOLO simple support" value="simple" />
-                <Picker.Item label="SOLO pro 2 of 3" value="pro" />
-              </Picker>
-            </Item>
+            >
+              <Picker.Item label="SOLO simple support" value="simple" />
+              <Picker.Item label="SOLO pro 2 of 3" value="pro" />
+            </Picker>
+          </Item>
           </View>
-          <H3 style={[styles.title, styles.mt48]}>3. SELECT FORM FACTOR</H3>
-          <View style={styles.deviceView}>
-            <Button
-              transparent
+        </View>
+        <View style={{marginTop:50}}>
+          <TouchableOpacity
+              title={"Continue to setup the card"}
               onPress={() => navigation.navigate('CardFrontInput')}
               style={[
                 styles.button,
                 {
-                  height: buttonImageHeight + 40,
+                  backgroundColor:"#1565c0",
                 },
               ]}
-            >
-              <View
-                style={{
-                  justifyContent: 'center',
-                  height: buttonImageHeight,
-                }}
-              >
-                <Image source={require('../assets/card.png')} />
-              </View>
-              <Text style={styles.buttonLabel}>Card</Text>
-            </Button>
-            <Button
-              onPress={() => navigation.navigate('BarInput')}
-              transparent
-              style={[
-                styles.button,
-                {
-                  marginLeft: buttonGutter,
-                  height: buttonImageHeight + 40,
-                },
-              ]}
-            >
-              <View
-                style={{
-                  justifyContent: 'center',
-                  height: buttonImageHeight,
-                }}
-              >
-                <Image source={require('../assets/bar.png')} />
-              </View>
-              <Text style={styles.buttonLabel}>Bar</Text>
-            </Button>
-          </View>
-        </Content>
-      </Container>
+          >
+            <Text>Continue to setup the card</Text>
+          </TouchableOpacity>
+        </View>
+
+      </View>
     );
   }
 }

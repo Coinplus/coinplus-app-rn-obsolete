@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   Image,
   Keyboard,
@@ -12,7 +13,6 @@ import {
   Content,
   Footer,
   FooterTab,
-  Icon,
   Input,
   Button,
   Picker,
@@ -261,6 +261,12 @@ class CardBackInputScreen extends Component {
                     multiline
                     style={[styles.textInput, styles.textInputSecret]}
                   />
+                  <Icon name="qrcode-scan" size={28} color="#000" style={{marginRight:5}}
+                        onPress={() => {
+                          Keyboard.dismiss();
+                          console.log(navigation);
+                          navigation.navigate('QRScan', {qrtype: 'secret1'});
+                        }}/>
                 </Item>
                 <Item
                   regular
@@ -287,6 +293,12 @@ class CardBackInputScreen extends Component {
                     multiline
                     style={[styles.textInput, styles.textInputSecret]}
                   />
+                  <Icon name="qrcode-scan" size={28} color="#000" style={{marginRight:5}}
+                        onPress={() => {
+                          Keyboard.dismiss();
+                          console.log(navigation);
+                          navigation.navigate('QRScan', {qrtype: 'secret2'});
+                        }}/>
                 </Item>
                 {mode === "pro" && (
                   <Item
@@ -303,7 +315,7 @@ class CardBackInputScreen extends Component {
                   >
                     <Picker
                       mode="dropdown"
-                      iosIcon={<Icon name="ios-arrow-down" />}
+                      iosIcon={<Icon name="caretdown" />}
                       selectedValue={currentDeviceId}
                       onValueChange={
                         device === "first" ? updateDeviceId : updateProDeviceId
@@ -385,6 +397,7 @@ export default connect(
       dispatch(updateKey1Action(key));
     },
     updateKey2: key => {
+      console.log("key2")
       dispatch(updateKey2Action(key));
     },
     updateProKey1: key => {

@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   Image,
   Keyboard,
@@ -15,10 +16,10 @@ import {
   Input,
   Button,
   Text,
-  Item,
+  Item
 } from 'native-base';
 import {connect} from 'react-redux';
-import NfcManager, {Ndef} from 'react-native-nfc-manager';
+import NfcManager, {Ndef, NfcTech} from 'react-native-nfc-manager';
 
 import {
   resetPublicKeyAction,
@@ -42,7 +43,7 @@ const input1 = {
   height: 330 - 262,
 };
 
-const VERBOSE = false;
+const VERBOSE = true;
 
 const styles = StyleSheet.create({
   view: {
@@ -100,6 +101,8 @@ class CardFrontInputScreen extends Component {
     if (this.stateChangedSubscription) {
       this.stateChangedSubscription.remove();
     }
+    console.log("removed NFC");
+    NfcManager.cancelTechnologyRequest();
   }
 
   handleBar = (event) => {
@@ -129,20 +132,31 @@ class CardFrontInputScreen extends Component {
     }
   };
 
-  startDetection = () => {
+  startDetection = async () => {
     VERBOSE && console.log('startDetection');
-    NfcManager.registerTagEvent(
-        this.onTagDiscovered,
-        'Hold your device over the SOLO card',
-        true,
-    );
+    // NfcManager.registerTagEvent(
+    //     this.onTagDiscovered,
+    //     'Hold your device over the SOLO card',
+    //     true,
+    // );
+    try {
+      // register for the NFC tag with NDEF in it
+      await NfcManager.requestTechnology(NfcTech.Ndef);
+      // the resolved tag object will contain `ndefMessage` property
+      const tag = await NfcManager.getTag();
+      this.onTagDiscovered(tag);
+      console.log('Tag found', tag);
+      await NfcManager.cancelTechnologyRequest();
+      this.startNfc();
+    } catch (ex) {
+      console.log('Oops!', ex);
+    } finally {
+      // stop the nfc scanning
+      VERBOSE && console.log('restartedDetection');
+      await NfcManager.cancelTechnologyRequest();
+      // this.startNfc();
+    }
   };
-
-  stopDetection = () => {
-    VERBOSE && console.log('stopDetection');
-    NfcManager.unregisterTagEvent();
-  };
-
   startNfc() {
     NfcManager.start()
         .then(() => {
@@ -156,9 +170,11 @@ class CardFrontInputScreen extends Component {
             NfcManager.onStateChanged((event) => {
               if (event.state === 'on') {
               // this.setState({ nfcEnabled: true });
+                console.log("Started");
                 this.startDetection();
               } else if (event.state === 'off') {
               // this.setState({ nfcEnabled: false });
+                console.log("Stopped");
                 this.stopDetection();
               } else if (event.state === 'turning_on') {
               // do whatever you want
@@ -243,16 +259,12 @@ class CardFrontInputScreen extends Component {
                   value={publicKey}
                   style={styles.textInput}
                 />
-                <Button
-                  title="fuck"
-                  name="md-qr-scanner"
-                  onPress={() => {
-                    Keyboard.dismiss();
-                    console.log(navigation);
-                    navigation.navigate('QRScan', {qrtype: 'card'});
-                  }}
-                ><Text style={styles.colorWhite}>Next</Text>
-                </Button>
+                <Icon name="qrcode-scan" size={28} color="#000" style={{marginRight:5}}
+                      onPress={() => {
+                        Keyboard.dismiss();
+                        console.log(navigation);
+                        navigation.navigate('QRScan', {qrtype: 'card'});
+                      }}/>
               </Item>
             )}
           </View>

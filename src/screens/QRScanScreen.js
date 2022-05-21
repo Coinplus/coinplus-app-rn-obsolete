@@ -6,6 +6,8 @@ import {connect} from 'react-redux';
 import {
   updatePublicKeyAction,
   updateDestinationAddressAction,
+  updateKey1Action,
+  updateKey2Action
 } from '../redux/reducers/inputs';
 
 import parseScannedCode from '../util/scannedCodeParser';
@@ -33,14 +35,20 @@ class QRScanScreen extends Component {
       navigation,
       updatePublicKey,
       updateDestinationAddress,
+      updateKey1,
+      updateKey2
     } = this.props;
     const {qrtype, callback} = navigation.state.params;
     try {
-      const publicKey = parseScannedCode(e.data);
+      const data = parseScannedCode(e.data);
       if (qrtype === 'card') {
-        updatePublicKey(publicKey);
+        updatePublicKey(data);
       } else if (qrtype === 'destination') {
-        updateDestinationAddress(publicKey);
+        updateDestinationAddress(data);
+      } else if(qrtype === 'secret1') {
+        updateKey1(data);
+      } else if(qrtype === 'secret2') {
+        updateKey2(data);
       }
       if (typeof(callback) !== 'undefined') {
         callback(publicKey);
@@ -79,5 +87,11 @@ export default connect(
       updateDestinationAddress: (key) => {
         dispatch(updateDestinationAddressAction(key));
       },
+      updateKey1: (key) => {
+        dispatch(updateKey1Action(key))
+      },
+      updateKey2: (key) => {
+        dispatch(updateKey2Action(key))
+      }
     }),
 )(QRScanScreen);
