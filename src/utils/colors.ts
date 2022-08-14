@@ -17,6 +17,10 @@ const COLORS = {
   WHITE: '#fff',
   GRAY: '#E1E2E9',
   GRAY_BG: '#EEEFF4',
+  BLACK: '#11183C',
+  GRAY2: '#828A9B',
+  GRAY3: '#F0F2F5',
+  GREEN: '#00BA1E',
 };
 
 export default COLORS;

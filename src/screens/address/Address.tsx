@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Image,
@@ -7,17 +7,13 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-import * as Progress from 'react-native-progress';
+// @ts-ignore
 import styled from 'styled-components/native';
-import {validate} from 'bitcoin-address-validation';
 import {ScreenTitle} from '../../components/ScreenTitle';
-import {PAGE_WIDTH} from '../../utils';
 import colors from '../../utils/colors';
 import {ButtonCp} from '../../components/ButtonCP';
 import {images} from '../../assets';
 import FlipView from '../../components/FlipView';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import {NfcText} from './components/NfcText';
 import {CardOption} from '../selectMode/components/CardOption';
 
 const SelectFormWrapper = styled.View`
@@ -33,39 +29,39 @@ const CardFrontTouchable = styled.TouchableOpacity`
   justify-content: flex-end;
   align-self: center;
 `;
-
-const ProgressBarWrapper = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 16px;
-  margin-bottom: 24px;
-`;
-
-const EnterAddressText = styled.Text`
-  font-family: 'Lexend-Regular';
-  font-weight: 300;
-  font-size: 17px;
-  color: ${colors.SECONDARY_TEX};
-  text-align: center;
-  margin-bottom: 8px;
-`;
-const OrText = styled.Text`
-  font-family: 'Lexend-Regular';
-  font-weight: 300;
-  font-size: 14px;
-  color: ${colors.SECONDARY_TEX};
-  text-align: center;
-  margin-bottom: 8px;
-`;
-
-const BtnText = styled.Text`
-  font-family: 'Lexend-Medium';
-  font-weight: 300;
-  font-size: 17px;
-  color: ${colors.SECONDARY_TEX};
-  text-align: center;
-  margin-left: 8px;
-`;
+//
+// const ProgressBarWrapper = styled.View`
+//   flex-direction: row;
+//   justify-content: space-between;
+//   padding: 0 16px;
+//   margin-bottom: 24px;
+// `;
+//
+// const EnterAddressText = styled.Text`
+//   font-family: 'Lexend-Regular';
+//   font-weight: 300;
+//   font-size: 17px;
+//   color: ${colors.SECONDARY_TEX};
+//   text-align: center;
+//   margin-bottom: 8px;
+// `;
+// const OrText = styled.Text`
+//   font-family: 'Lexend-Regular';
+//   font-weight: 300;
+//   font-size: 14px;
+//   color: ${colors.SECONDARY_TEX};
+//   text-align: center;
+//   margin-bottom: 8px;
+// `;
+//
+// const BtnText = styled.Text`
+//   font-family: 'Lexend-Medium';
+//   font-weight: 300;
+//   font-size: 17px;
+//   color: ${colors.SECONDARY_TEX};
+//   text-align: center;
+//   margin-left: 8px;
+// `;
 
 const BalanceText = styled.Text`
   font-family: 'Lexend-Medium';
@@ -85,20 +81,20 @@ const BalanceValue = styled.Text`
   position: absolute;
   top: 63px;
 `;
-
-const QrScan = styled.TouchableOpacity`
-  color: ${colors.BUTTON_PRIMARY_OP_TEXT};
-  background-color: ${colors.BUTTON_PRIMARY_OP};
-  text-align: center;
-  align-items: center;
-  flex-direction: row;
-  justify-content: center;
-  padding: 10px 20px;
-  width: 137px;
-  border-radius: 42px;
-  align-self: center;
-  margin-bottom: 51px;
-`;
+//
+// const QrScan = styled.TouchableOpacity`
+//   color: ${colors.BUTTON_PRIMARY_OP_TEXT};
+//   background-color: ${colors.BUTTON_PRIMARY_OP};
+//   text-align: center;
+//   align-items: center;
+//   flex-direction: row;
+//   justify-content: center;
+//   padding: 10px 20px;
+//   width: 137px;
+//   border-radius: 42px;
+//   align-self: center;
+//   margin-bottom: 51px;
+// `;
 
 const AddressInput = styled.TextInput`
   background-color: ${props => (props.isInFocus ? colors.WHITE : colors.WHITE)};
@@ -134,21 +130,15 @@ interface IAddress {}
 
 export const Address = ({navigation}: IAddress) => {
   const [title, setTitle] = useState('Your Card');
-  const [address, onAddressChange] = React.useState('');
+  const [address, onAddressChange] = React.useState(
+    'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
+  );
   const [balance, setBalance] = useState('0.0');
   const [secret1, setSecret1] = useState('');
   const [secret2, setSecret2] = useState('7279xstw2vemznyj4t3ymrc64jyssc');
   const [isAddressinFoucs, toggleAddressFocus] = React.useState(false);
   const [isFlipped, setFlipped] = useState(false);
 
-  useEffect(() => {
-    if (validate(address)) {
-      setTitle('Fill in secret fields');
-      setFlipped(true);
-    } else {
-      setTitle('Your card');
-    }
-  }, [address]);
   return (
     <SelectFormWrapper>
       <View>
@@ -159,9 +149,7 @@ export const Address = ({navigation}: IAddress) => {
             isFlipped={isFlipped}
             front={
               <View>
-                <CardFrontTouchable
-                  onPress={() => setFlipped(true)}
-                  style={{position: 'relative'}}>
+                <CardFrontTouchable style={{position: 'relative'}}>
                   <Image
                     source={images.cardAddress}
                     style={{position: 'absolute', left: 0, top: 0}}
@@ -182,9 +170,7 @@ export const Address = ({navigation}: IAddress) => {
             }
             back={
               <View style={{alignItems: 'center'}}>
-                <TouchableOpacity
-                  onPress={() => setFlipped(false)}
-                  style={{position: 'relative'}}>
+                <TouchableOpacity style={{position: 'relative'}}>
                   <Image source={images.cardAddressBack} />
                   <SecretInput1
                     placeholder="Secret 1"
@@ -221,17 +207,35 @@ export const Address = ({navigation}: IAddress) => {
           <Text style={{color: '#AFB2C4', marginTop: 34, marginBottom: 64}}>
             Your SOLO Card is easy to transport. Put it in your pocket or wallet
           </Text>
+          {!isFlipped && (
+            <ButtonCp
+              style={{
+                opacity: address ? 1 : 0,
+                alignSelf: 'center',
+                marginBottom: 16,
+              }}
+              title="Save"
+              onPress={() => navigation.navigate('Auth')}
+            />
+          )}
           <ButtonCp
             style={{
               opacity: address ? 1 : 0,
               alignSelf: 'center',
               marginBottom: 16,
             }}
-            title="Save"
-            onPress={() => navigation.navigate('Auth')}
+            disabled={(!secret1 || !secret2) && isFlipped}
+            title="Redeem"
+            onPress={() => {
+              setTitle('Fill in secret fields');
+              setFlipped(true);
+            }}
           />
 
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() =>
+              isFlipped ? setFlipped(false) : navigation.goBack()
+            }>
             <Text style={{textAlign: 'center'}}>Back</Text>
           </TouchableOpacity>
         </View>

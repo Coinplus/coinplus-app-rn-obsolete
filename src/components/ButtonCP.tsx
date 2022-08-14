@@ -1,4 +1,5 @@
 import React from 'react';
+// @ts-ignore
 import styled from 'styled-components/native';
 import {StyleSheet, View, GestureResponderEvent, ViewStyle} from 'react-native';
 import colors from '../utils/colors';
@@ -13,18 +14,26 @@ const StyledButton = styled.TouchableOpacity`
 const StyledText = styled.Text`
   color: white;
   text-align: center;
+  font-weight: 300;
   font-family: 'Lexend-Medium';
 `;
 interface IButtonCp {
   title: string;
   width?: string;
+  disabled?: boolean;
   onPress: (event: GestureResponderEvent) => void;
   style?: ViewStyle;
 }
-export const ButtonCp = ({title, width, onPress, style}: IButtonCp) => {
+export const ButtonCp = ({
+  title,
+  width,
+  onPress,
+  style,
+  disabled,
+}: IButtonCp) => {
   return (
-    <View style={[styles.fixToText, style]}>
-      <StyledButton onPress={onPress} width={width}>
+    <View style={[styles.fixToText, style, disabled && {opacity: 0.5}]}>
+      <StyledButton onPress={onPress} width={width} disabled={disabled}>
         <StyledText>{title}</StyledText>
       </StyledButton>
     </View>

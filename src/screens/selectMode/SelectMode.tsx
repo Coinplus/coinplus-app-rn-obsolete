@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+// @ts-ignore
 import styled from 'styled-components/native';
 import {View, Image, Animated} from 'react-native';
 import * as Progress from 'react-native-progress';
@@ -42,7 +43,7 @@ const ProgressBarWrapper = styled.View`
 interface ISelectMode {
   navigation: any;
 }
-const PAGE_WIDTH = window.width;
+export const PAGE_WIDTH = window.width;
 
 export const SelectMode = ({navigation}: ISelectMode) => {
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -148,7 +149,17 @@ export const SelectMode = ({navigation}: ISelectMode) => {
   );
 };
 
-const CarItem = ({isActive, item, index}) => {
+// TODO: get rid of any type
+
+export const CarItem = ({
+  isActive,
+  item,
+  index,
+}: {
+  isActive: boolean;
+  item: any;
+  index: number;
+}) => {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial value for opacity: 0
   const fadeAnimLogo = useRef(new Animated.Value(1)).current; // Initial value for opacity: 0
   const translateAnim2 = useRef(new Animated.Value(0)).current;

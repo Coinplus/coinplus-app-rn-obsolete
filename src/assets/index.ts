@@ -15,4 +15,5 @@ export const images = {
   nfcBlueIcon: require('./icons/nfc-blue-reader.png'),
   cpTransparentLogo: require('./images/CoinplusTransparentLogo.png'),
   authID: require('./images/authID.png'),
+  btcIcon: require('./icons/btc.png'),
 };

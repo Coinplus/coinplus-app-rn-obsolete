@@ -7,6 +7,7 @@ import {SelectMode} from './src/screens/selectMode/SelectMode';
 import {FormFactor} from './src/screens/formFactor/FormFactor';
 import {Address} from './src/screens/address/Address';
 import {Auth} from './src/screens/auth/Auth';
+import {Wallet} from './src/screens/wallet/Wallet';
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +48,13 @@ function App() {
           <Stack.Screen
             name="Auth"
             component={Auth}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Wallet"
+            component={Wallet}
             options={{
               headerShown: false,
             }}

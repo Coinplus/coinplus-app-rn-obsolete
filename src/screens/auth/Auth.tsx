@@ -51,7 +51,7 @@ const FaceIDDesc = styled.Text`
   color: ${colors.PRIMARY_TEX};
 `;
 
-export const Auth = props => {
+export const Auth = ({navigation}) => {
   const [isEnabled, setIsEnabled] = useState(false);
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
   return (
@@ -87,7 +87,11 @@ export const Auth = props => {
           value={isEnabled}
         />
       </FaceIDWrapper>
-      <ButtonCp title={'Next'} style={{alignSelf: 'center'}} />
+      <ButtonCp
+        title={'Next'}
+        style={{alignSelf: 'center'}}
+        onPress={() => navigation.navigate('Wallet')}
+      />
     </View>
   );
 };
