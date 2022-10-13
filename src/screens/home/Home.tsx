@@ -46,7 +46,12 @@ export const Home = ({navigation}: IHome) => {
         title="QR scan"
         width="180px"
         style={{marginBottom: 17}}
-        onPress={() => navigation.navigate('Address')}
+        onPress={() =>
+          navigation.navigate('QrScanner', {
+            prevScreen: 'Home',
+            nextScreen: 'Address',
+          })
+        }
       />
       <Text style={{marginBottom: 17, fontSize: 13}}>Or</Text>
       <TouchableOpacity

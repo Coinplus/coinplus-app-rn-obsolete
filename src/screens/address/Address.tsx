@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Image,
@@ -7,7 +7,9 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 // @ts-ignore
+import {TextInput} from 'react-native-paper';
 import styled from 'styled-components/native';
 import {ScreenTitle} from '../../components/ScreenTitle';
 import colors from '../../utils/colors';
@@ -102,9 +104,10 @@ const AddressInput = styled.TextInput`
   padding: 10px;
   margin-bottom: 32px;
   letter-spacing: 0.5px;
+  color: black;
 `;
 
-const SecretInput1 = styled.TextInput`
+const SecretInput1 = styled.Text`
   background-color: white;
   height: 56px;
   width: 146px;
@@ -113,9 +116,11 @@ const SecretInput1 = styled.TextInput`
   letter-spacing: 0.5px;
   position: absolute;
   top: 30px;
+  color: black;
 `;
-const SecretInput2 = styled.TextInput`
+const SecretInput2 = styled.Text`
   background-color: white;
+  color: black;
   height: 56px;
   width: 146px;
   padding: 10px;
@@ -126,19 +131,45 @@ const SecretInput2 = styled.TextInput`
   right: 0;
 `;
 
-interface IAddress {}
+interface IAddress {
+  navigation: any;
+  route: any;
+}
 
-export const Address = ({navigation}: IAddress) => {
+export const Address = ({navigation, route}: IAddress) => {
   const [title, setTitle] = useState('Your Card');
-  const [address, onAddressChange] = React.useState(
-    'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh',
-  );
+  const [currentSecret, setCurrentSecret] = useState('');
+  const [address, onAddressChange] = useState('');
   const [balance, setBalance] = useState('0.0');
   const [secret1, setSecret1] = useState('');
-  const [secret2, setSecret2] = useState('7279xstw2vemznyj4t3ymrc64jyssc');
+  const [secret2, setSecret2] = useState('');
   const [isAddressinFoucs, toggleAddressFocus] = React.useState(false);
   const [isFlipped, setFlipped] = useState(false);
+  const [secretState, setSecretState] = useState(1);
 
+  useEffect(() => {
+    let {data, additionalData} = route.params;
+    if (!data) {
+      data = '';
+    }
+    if (additionalData && additionalData.status == 'secret') {
+      onAddressChange(additionalData.address);
+      setSecretState(additionalData.secretState);
+      setFlipped(true);
+      if (additionalData.secretState === 2) {
+        setSecret1(additionalData.secret1);
+        setCurrentSecret(data);
+      } else {
+        setSecret2(additionalData.secret2);
+        setCurrentSecret(data);
+      }
+    } else {
+      onAddressChange(data);
+    }
+  }, [route.params]);
+
+  // @ts-ignore
+  // @ts-ignore
   return (
     <SelectFormWrapper>
       <View>
@@ -174,18 +205,18 @@ export const Address = ({navigation}: IAddress) => {
                   <Image source={images.cardAddressBack} />
                   <SecretInput1
                     placeholder="Secret 1"
-                    value={secret1}
-                    onChangeText={setSecret1}
+                    // onChangeText={setSecret1}
                     multiline={true}
-                    maxLength={30}
-                  />
+                    maxLength={30}>
+                    {secret1}
+                  </SecretInput1>
                   <SecretInput2
                     placeholder="Secret 2"
-                    value={secret2}
-                    onChangeText={setSecret2}
-                    multiline={true}
-                    maxLength={30}
-                  />
+                    // onChangeText={setSecret2}
+                  >
+                    {' '}
+                    {secret2}
+                  </SecretInput2>
                 </TouchableOpacity>
               </View>
             }
@@ -198,47 +229,115 @@ export const Address = ({navigation}: IAddress) => {
             perspective={1000}
           />
         </View>
-        <View style={{paddingHorizontal: 16}}>
-          <CardOption
-            title="SOLO simple support"
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Velit adipiscing interdum odio purus."
-            isActive={false}
-          />
-          <Text style={{color: '#AFB2C4', marginTop: 34, marginBottom: 64}}>
-            Your SOLO Card is easy to transport. Put it in your pocket or wallet
-          </Text>
-          {!isFlipped && (
+        {!isFlipped && (
+          <View style={{paddingHorizontal: 16}}>
+            <CardOption
+              title="SOLO simple support"
+              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Velit adipiscing interdum odio purus."
+              isActive={false}
+            />
+
+            <Text style={{color: '#AFB2C4', marginTop: 34, marginBottom: 64}}>
+              Your SOLO Card is easy to transport. Put it in your pocket or
+              wallet
+            </Text>
+            {!isFlipped && (
+              <ButtonCp
+                style={{
+                  opacity: address ? 1 : 0,
+                  alignSelf: 'center',
+                  marginBottom: 16,
+                }}
+                title="Save"
+                onPress={() => navigation.navigate('Auth')}
+              />
+            )}
             <ButtonCp
               style={{
                 opacity: address ? 1 : 0,
                 alignSelf: 'center',
                 marginBottom: 16,
               }}
-              title="Save"
-              onPress={() => navigation.navigate('Auth')}
+              disabled={(!secret1 || !secret2) && isFlipped}
+              title="Redeem"
+              onPress={() => {
+                setTitle('Fill in secret fields');
+                setFlipped(true);
+              }}
             />
-          )}
-          <ButtonCp
-            style={{
-              opacity: address ? 1 : 0,
-              alignSelf: 'center',
-              marginBottom: 16,
-            }}
-            disabled={(!secret1 || !secret2) && isFlipped}
-            title="Redeem"
-            onPress={() => {
-              setTitle('Fill in secret fields');
-              setFlipped(true);
-            }}
-          />
 
-          <TouchableOpacity
-            onPress={() =>
-              isFlipped ? setFlipped(false) : navigation.goBack()
-            }>
-            <Text style={{textAlign: 'center'}}>Back</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={() =>
+                isFlipped ? setFlipped(false) : navigation.goBack()
+              }>
+              <Text style={{textAlign: 'center'}}>Back</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+        {isFlipped && (
+          <View style={{width: '100%', paddingLeft: 20, paddingRight: 20}}>
+            {secretState < 3 && (
+              <TextInput
+                right={
+                  <TextInput.Icon
+                    icon="qrcode-scan"
+                    onPress={() =>
+                      navigation.navigate('QrScanner', {
+                        prevScreen: 'Address',
+                        nextScreen: 'Address',
+                        additionalData: {
+                          status: 'secret',
+                          secretState: secretState,
+                          address: address,
+                          secret1: secret1,
+                          secret2: secret2,
+                        },
+                      })
+                    }
+                  />
+                }
+                multiline={false}
+                // numberOfLines={3}
+                mode="outlined"
+                style={{
+                  backgroundColor: 'white',
+                  width: '100%',
+                  letterSpacing: 0.5,
+                  // position: 'absolute',
+                  // top: 30,
+                  fontSize: 15,
+                  borderColor: 'red',
+                  color: 'black',
+                }}
+                placeholder={'Secret ' + secretState}
+                value={currentSecret}
+                onChangeText={setCurrentSecret}
+                maxLength={30}
+              />
+            )}
+            <ButtonCp
+              style={{
+                opacity: address ? 1 : 0,
+                alignSelf: 'center',
+                marginBottom: 16,
+                marginTop: 20,
+              }}
+              disabled={secretState < 3 && currentSecret.length === 0}
+              title={secretState < 3 ? 'Next' : 'Save'}
+              onPress={() => {
+                if (secretState === 1) {
+                  setSecret1(currentSecret);
+                  setCurrentSecret('');
+                  setSecretState(2);
+                } else {
+                  setSecret2(currentSecret);
+                  setCurrentSecret('');
+                  setSecretState(3);
+                }
+              }}
+            />
+          </View>
+        )}
         {/*//TODO the code below was from the previous iteration and can be used*/}
         {/*<EnterAddressText>Enter an address on your card</EnterAddressText>*/}
         {/*<OrText>Or</OrText>*/}
