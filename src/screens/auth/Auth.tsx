@@ -1,10 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {View, Text, Image, Switch} from 'react-native';
 import {images} from '../../assets';
 import styled from 'styled-components/native';
 import colors from '../../utils/colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {ButtonCp} from '../../components/ButtonCP';
+import {getAvailableAuth, authenticate} from '../../utils/biometrics'
+import {storeAuthData} from '../../utils/store'
+import { BiometryTypes } from 'react-native-biometrics'
 
 const TitleText = styled.Text`
   font-family: 'Lexend-Regular';
@@ -52,8 +55,37 @@ const FaceIDDesc = styled.Text`
 `;
 
 export const Auth = ({navigation}) => {
-  const [isEnabled, setIsEnabled] = useState(false);
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+    const[authText1, setAuthText1] = useState("");
+    const[authText2, setAuthText2] = useState("");
+    const[authType, setAuthType] = useState("");
+    const[isAuthEnabled, setAuthEnabled] = useState(false);
+    useEffect(() => {
+        getAvailableAuth().then(res => {
+            if (res === BiometryTypes.Biometrics) {
+                setAuthText1("Fingerprint")
+                setAuthText2("Authentication with Fingerprint")
+                setAuthType("Finger")
+            }
+
+            if (res === BiometryTypes.TouchID || res === BiometryTypes.FaceID) {
+                setAuthText1("Face ID")
+                setAuthText2("Authentication with Face ID")
+                setAuthType("Face")
+            }
+        });
+    }, [])
+  const toggleSwitch = () =>  {
+        if(!isAuthEnabled) {
+            authenticate().then(res => {
+                if(res) {
+                    setAuthEnabled(previousState => !previousState);
+                }
+            })
+        } else {
+            setAuthEnabled(previousState => !previousState);
+        }
+
+  }
   return (
     <View style={{backgroundColor: 'white', flex: 1}}>
       <Image
@@ -72,25 +104,29 @@ export const Auth = ({navigation}) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <Icon name="face" size={28} style={{marginRight: 8}} />
+            {
+                authType == "Finger" ?<Icon name="fingerprint" size={28} style={{marginRight: 8}} /> :<Icon name="face" size={28} style={{marginRight: 8}} />
+            }
           <View>
             <FaceIDText style={{fontSize: 16, fontWeight: 'bold'}}>
-              Face ID
+                {authText1}
             </FaceIDText>
-            <FaceIDDesc>Authentication with Face ID</FaceIDDesc>
+            <FaceIDDesc>{authText2}</FaceIDDesc>
           </View>
         </View>
 
         <Switch
           ios_backgroundColor="#DBDCE1"
           onValueChange={toggleSwitch}
-          value={isEnabled}
+          value={isAuthEnabled}
         />
       </FaceIDWrapper>
       <ButtonCp
         title={'Next'}
         style={{alignSelf: 'center'}}
-        onPress={() => navigation.navigate('Wallet')}
+        onPress={() => {
+            storeAuthData({authEnabled:isAuthEnabled})
+            navigation.navigate('Wallet')}}
       />
     </View>
   );

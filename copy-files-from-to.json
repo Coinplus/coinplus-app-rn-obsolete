@@ -1,0 +1,23 @@
+{
+  "copyFiles": [
+    {
+      "from": "files-to-copy/build.gradle",
+      "to": "node_modules/react-native-scrypt/android/build.gradle"
+    },
+    {
+      "from": "files-to-copy/react-native-os/build.gradle",
+      "to": "node_modules/react-native-os/android/build.gradle"
+    },
+    {
+      "from": "files-to-copy/react-native-tcp/build.gradle",
+      "to": "node_modules/react-native-tcp/android/build.gradle"
+    },
+    {
+      "from": "files-to-copy/index.js",
+      "to": "node_modules/react-native/index.js"
+    }
+  ],
+  "copyFilesSettings": {
+    "whenFileExists": "overwrite"
+  }
+}

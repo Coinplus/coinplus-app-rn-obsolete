@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 // @ts-ignore
 import styled from 'styled-components/native';
 import colors from '../../../utils/colors';
@@ -7,6 +7,7 @@ import {images} from '../../../assets';
 import {BtcTag} from './BtcTag';
 import Icon from 'react-native-vector-icons/AntDesign';
 import * as Progress from 'react-native-progress';
+import {getBitcoinData} from '../../../utils/bitcoin'
 
 const Wrapper = styled.View`
   flex: 1;
@@ -76,6 +77,18 @@ const ProgressBarWrapper = styled.View`
   justify-content: space-between;
 `;
 export const BtcPrice = () => {
+  const [lowest, setLowest] = useState(0);
+  const [highest, setHighest] = useState(0);
+  const [percentChange, setPercentChange] = useState(0);
+  const [current, setCurrent] = useState(0);
+  useEffect (() => {
+    getBitcoinData().then(res => {
+      setLowest(res.low);
+      setHighest(res.high);
+      setPercentChange(res.percent_change);
+      setCurrent(res.close);
+    })
+  }, [])
   return (
     <Wrapper>
       <CurrentPriceText>Current price</CurrentPriceText>
@@ -86,24 +99,24 @@ export const BtcPrice = () => {
             <BtcTitle>Bitcoin</BtcTitle>
             <BtcTag>BTC</BtcTag>
           </BtcFlexRow>
-          <BtcUsdPrice>$24,018.65</BtcUsdPrice>
+          <BtcUsdPrice>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(current.toFixed(2))}</BtcUsdPrice>
         </BtcInnerRow>
         <BtcInnerRow>
           <BtcFlexRow>
             <BtcTag isActive={true}>Rank #1</BtcTag>
             <BtcTag>Coin</BtcTag>
-            <BtcTag>On 3,396,129 watchlists</BtcTag>
+            {/*<BtcTag>On 3,396,129 watchlists</BtcTag>*/}
           </BtcFlexRow>
 
-          <BtcTag bgColor={colors.GREEN} color={colors.WHITE} fontSize="16px">
-            <Icon name="caretup" size={10} /> 1.46%
+          <BtcTag bgColor={percentChange > 0 ? colors.GREEN : colors.PRIMARY_RED} color={colors.WHITE} fontSize="16px">
+            <Icon name={percentChange > 0 ? 'caretup' : 'caretdown'} size={10} /> {percentChange.toFixed(2).toLocaleString('en-US')}%
           </BtcTag>
         </BtcInnerRow>
         <View style={{marginTop: 10}}>
           <BtcInnerRow>
             <BtcFlexRow>
               <BtcLowHighText>Low:</BtcLowHighText>
-              <BtcLowHighValueText>$23,657.27</BtcLowHighValueText>
+              <BtcLowHighValueText>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(lowest.toFixed(2))}</BtcLowHighValueText>
             </BtcFlexRow>
             <View style={{justifyContent: 'center', marginBottom: 10}}>
               <Text
@@ -132,7 +145,7 @@ export const BtcPrice = () => {
             </View>
             <BtcFlexRow>
               <BtcLowHighText>High:</BtcLowHighText>
-              <BtcLowHighValueText>$24,406.19</BtcLowHighValueText>
+              <BtcLowHighValueText>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(highest.toFixed(2))}</BtcLowHighValueText>
             </BtcFlexRow>
           </BtcInnerRow>
         </View>

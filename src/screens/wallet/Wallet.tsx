@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 // @ts-ignore
 import styled from 'styled-components/native';
 import colors from '../../utils/colors';
@@ -9,6 +9,14 @@ import {images} from '../../assets';
 import Carousel, {ICarouselInstance} from 'react-native-reanimated-carousel';
 import {CarItem} from '../selectMode/SelectMode';
 import {PAGE_WIDTH} from '../../utils';
+import {retriveCardData, retrivaeAuthData} from '../../utils/store'
+import {authenticate} from '../../utils/biometrics'
+import {getBitCoinRate, getBalance, getBitcoinData, getBalances} from '../../utils/bitcoin'
+import 'intl';
+import 'intl/locale-data/jsonp/en';
+import {
+    GestureHandlerRootView
+} from 'react-native-gesture-handler';
 
 const WalletWrapper = styled.View`
   flex: 1;
@@ -39,9 +47,51 @@ const BalanceAmount = styled.Text`
   color: ${colors.PRIMARY_TEX};
 `;
 
-export const Wallet = () => {
-  const [activeIndex, setActiveIndex] = useState(-1);
+export const Wallet = (navigator:any) => {
+  const [activeIndex, setActiveIndex] = useState(0);
   const ref = React.useRef<ICarouselInstance>(null);
+  const [data, setData] = useState([]);
+  const [addresses, setAddresses] = useState([]);
+  const [bitcoinRate, setBitcoiRate] = useState(0);
+  const [overAllBalance, setOverAllBalance] = useState(0);
+    useEffect(() => {
+        var balance = 0;
+        let addr = data.map(i => i.publicId)
+        console.log("###Balances")
+        if(addr.length > 0) {
+            getBalances(addr).then(res => {
+                let d = res.addresses;
+                d.push({});
+                setAddresses(d);
+                d.forEach(dt => {
+                    if(dt.address) {
+                        balance += dt.final_balance * bitcoinRate;
+                    }
+                })
+            });
+        }
+
+        setOverAllBalance(balance);
+    }, [bitcoinRate])
+    useEffect(() => {
+        getBitCoinRate().then(res => setBitcoiRate(res.toNumber()))
+     retrivaeAuthData().then(res => {
+         if(false && res && res.authEnabled) {
+             authenticate().then(res => {
+                 if(res) {
+                     retriveCardData().then(res => {
+                         setData(res);
+                     })
+                 }
+             })
+         } else {
+             retriveCardData().then(res => {
+                 setData(res);
+             })
+         }
+     })
+
+  }, [])
 
   const baseOptions = {
     vertical: false,
@@ -63,8 +113,9 @@ export const Wallet = () => {
 
       <View>
         <BalanceTitle>Total balance</BalanceTitle>
-        <BalanceAmount>$234.01</BalanceAmount>
+        <BalanceAmount>{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(overAllBalance.toFixed(2))}</BalanceAmount>
       </View>
+        <GestureHandlerRootView>
       <Carousel
         {...baseOptions}
         panGestureHandlerProps={{
@@ -72,19 +123,19 @@ export const Wallet = () => {
         }}
         pagingEnabled={true}
         snapEnabled={true}
-        onScrollEnd={index => setActiveIndex(index)}
+        onScrollEnd={index => {
+            console.log(index)
+            setActiveIndex(index)
+        }}
         ref={ref}
-        loop={true}
+        loop={false}
         modeConfig={{
           parallaxScrollingScale: 0.9,
           parallaxScrollingOffset: 50,
         }}
         mode="parallax"
         style={{width: '100%'}}
-        data={[
-          {colored: images.coloredSolo, bw: images.coloredSolo},
-          {colored: images.bwSoloPro, bw: images.bwSoloPro},
-        ]}
+        data={addresses}
         renderItem={({item, index}) => (
           <View
             style={{
@@ -96,11 +147,17 @@ export const Wallet = () => {
             <CarItem
               isActive={activeIndex === index}
               index={index}
-              item={item.colored}
-            />
+              isSolo={false}
+              publicId={item.address}
+              balance={item.final_balance}
+              onClick={!item.address ? () => navigator.navigate("Home"): null}
+              item={!item.address ? images.soloAdd :  images.coloredSolo}
+              // item={images.coloredSolo}
+            ></CarItem>
           </View>
         )}
       />
+        </GestureHandlerRootView>
       <BtcPrice />
     </WalletWrapper>
   );

@@ -1,7 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 // @ts-ignore
 import styled from 'styled-components/native';
-import {View, Image, Animated} from 'react-native';
+import {View, Image, Animated, Text, TouchableOpacity} from 'react-native';
 import * as Progress from 'react-native-progress';
 import {Grayscale} from 'react-native-color-matrix-image-filters';
 import {ScreenTitle} from '../../components/ScreenTitle';
@@ -152,13 +152,21 @@ export const SelectMode = ({navigation}: ISelectMode) => {
 // TODO: get rid of any type
 
 export const CarItem = ({
-  isActive,
-  item,
-  index,
+                            publicId,
+                            onClick,
+                            isActive,
+                            item,
+                            index,
+                            isSolo,
+                            balance
 }: {
   isActive: boolean;
   item: any;
   index: number;
+  isSolo: boolean;
+  publicId: string;
+  onClick: any;
+    balance:number
 }) => {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial value for opacity: 0
   const fadeAnimLogo = useRef(new Animated.Value(1)).current; // Initial value for opacity: 0
@@ -208,15 +216,27 @@ export const CarItem = ({
       useNativeDriver: false,
     }).start();
   };
-  return index === 0 ? (
+  return !isSolo ? (
     <View>
       {!isActive ? (
         <Grayscale>
           <Image source={item} />
         </Grayscale>
       ) : (
+          <View>
         <Image source={item} />
+              {publicId ?
+              <View style={{
+              position: 'absolute',
+                  bottom: 20,
+              left: 20}}>
+                  <Text style={{fontSize: 13,
+                      fontWeight: "bold",}}>Balance</Text>
+                  <Text style={{fontSize: 13,}}>BTC {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(balance.toFixed(5))}</Text>
+              </View>: null}
+          </View>
       )}
+
     </View>
   ) : (
     <View

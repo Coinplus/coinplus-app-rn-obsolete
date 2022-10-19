@@ -1,6 +1,4 @@
-'use strict';
-
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 
 import {
     AppRegistry,
@@ -13,33 +11,51 @@ import {
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { RNCamera } from 'react-native-camera';
 
-class QrScanner extends Component {
-    onSuccess = e => {
-        Linking.openURL(e.data).catch(err =>
-            console.error('An error occured', err)
-        );
-    };
+interface IScanner {
+    navigation: any;
+    route: any;
+}
 
-    render() {
-        return (
-            <QRCodeScanner
-                onRead={this.onSuccess}
-                flashMode={RNCamera.Constants.FlashMode.torch}
-                topContent={
-                    <Text style={styles.centerText}>
-                        Go to{' '}
-                        <Text style={styles.textBold}>wikipedia.org/wiki/QR_code</Text> on
-                        your computer and scan the QR code.
-                    </Text>
-                }
-                bottomContent={
-                    <TouchableOpacity style={styles.buttonTouchable}>
-                        <Text style={styles.buttonText}>OK. Got it!</Text>
-                    </TouchableOpacity>
-                }
-            />
-        );
+export const ScanScreen = ({navigation, route}: IScanner) =>  {
+    let addData: any;
+    let previouse: any;
+    let next: any;
+    useEffect(() => {
+        let {prevScreen, nextScreen, additionalData} = route.params;
+        previouse = prevScreen;
+        next = nextScreen;
+        addData = additionalData;
+    }, [route.params]);
+
+    const onSucsess = (res: any) => {
+        let dt = res.data;
+        console.log(dt);
+        if(dt.includes("http")) {
+            let dtar = dt.split("/");
+            dt = dtar[dtar.length - 1];
+        };
+        navigation.navigate(next, {additionalData:addData, data:dt});
+        navigation.navigate(next, {additionalData:addData, data:dt});
+        navigation.navigate(next, {additionalData:addData, data:dt});
     }
+    return (<QRCodeScanner
+        fadeIn={true}
+        reactivate={true}
+        reactivateTimeout={5000}
+        showMarker={true}
+        onRead={onSucsess}
+        flashMode={RNCamera.Constants.FlashMode.off}
+        topContent={
+            <Text style={styles.centerText}>
+               Please scan QR code from the card
+            </Text>
+        }
+        bottomContent={
+            <TouchableOpacity onPress={() => {navigation.navigate(previouse, {additionalData:addData})}} style={styles.buttonTouchable}>
+                <Text style={styles.buttonText}>Cancel</Text>
+            </TouchableOpacity>
+        }
+    />)
 }
 
 const styles = StyleSheet.create({
@@ -61,5 +77,3 @@ const styles = StyleSheet.create({
         padding: 16
     }
 });
-
-AppRegistry.registerComponent('default', () => ScanScreen);

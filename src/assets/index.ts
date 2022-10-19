@@ -16,4 +16,5 @@ export const images = {
   cpTransparentLogo: require('./images/CoinplusTransparentLogo.png'),
   authID: require('./images/authID.png'),
   btcIcon: require('./icons/btc.png'),
+  soloAdd: require('./images/solo-add-card.png')
 };

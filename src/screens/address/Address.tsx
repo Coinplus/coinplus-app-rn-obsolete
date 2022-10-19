@@ -17,6 +17,8 @@ import {ButtonCp} from '../../components/ButtonCP';
 import {images} from '../../assets';
 import FlipView from '../../components/FlipView';
 import {CardOption} from '../selectMode/components/CardOption';
+import bitcoinModule from '../../utils/bitcoin'
+import {storeCardData, retrivaeAuthData} from '../../utils/store'
 
 const SelectFormWrapper = styled.View`
   flex: 1;
@@ -241,17 +243,17 @@ export const Address = ({navigation, route}: IAddress) => {
               Your SOLO Card is easy to transport. Put it in your pocket or
               wallet
             </Text>
-            {!isFlipped && (
-              <ButtonCp
-                style={{
-                  opacity: address ? 1 : 0,
-                  alignSelf: 'center',
-                  marginBottom: 16,
-                }}
-                title="Save"
-                onPress={() => navigation.navigate('Auth')}
-              />
-            )}
+            {/*{!isFlipped && (*/}
+            {/*  <ButtonCp*/}
+            {/*    style={{*/}
+            {/*      opacity: address ? 1 : 0,*/}
+            {/*      alignSelf: 'center',*/}
+            {/*      marginBottom: 16,*/}
+            {/*    }}*/}
+            {/*    title="Save"*/}
+            {/*    onPress={() => navigation.navigate('Auth')}*/}
+            {/*  />*/}
+            {/*)}*/}
             <ButtonCp
               style={{
                 opacity: address ? 1 : 0,
@@ -329,6 +331,17 @@ export const Address = ({navigation, route}: IAddress) => {
                   setSecret1(currentSecret);
                   setCurrentSecret('');
                   setSecretState(2);
+                } else if (secretState === 3) {
+                  bitcoinModule.getWifBTC(secret1, secret2).then(async dt => {
+                    await storeCardData({publicId: address, privateKEy: dt});
+                    retrivaeAuthData().then(res => {
+                      if (!res || !res.authEnabled) {
+                        navigation.navigate('Auth');
+                      } else {
+                        navigation.navigate('Wallet')
+                      }
+                    })
+                  })
                 } else {
                   setSecret2(currentSecret);
                   setCurrentSecret('');

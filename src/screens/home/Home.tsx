@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Image, TouchableOpacity, View, Text} from 'react-native';
 import {images} from '../../assets';
 import {ButtonCp} from '../../components/ButtonCP';
 import styled from 'styled-components/native';
 import colors from '../../utils/colors';
 import {NfcText} from '../address/components/NfcText';
+import {retriveCardData} from '../../utils/store'
 
 const HomeWrapper = styled.View`
   flex: 1;
@@ -27,6 +28,8 @@ const SecondaryText = styled.Text`
 interface IHome {
   navigation: any;
 }
+
+
 
 export const Home = ({navigation}: IHome) => {
   return (
