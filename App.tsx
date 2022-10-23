@@ -17,19 +17,20 @@ const Stack = createNativeStackNavigator();
 function App() {
   const [defaultPage, setDefaultPage] = useState('');
   useEffect(() => {
-    retrivaeAuthData().then(dt => {
-      if (dt && dt.authEnabled) {
-        authenticate().then(res => {
-          if (res) {
-            detectFirstView();
-          } else {
-            authenticate();
-          }
-        });
-      } else {
-        detectFirstView();
-      }
-    });
+    // retrivaeAuthData().then(dt => {
+    //   if (dt && dt.authEnabled) {
+    //     authenticate().then(res => {
+    //       if (res) {
+    //         detectFirstView();
+    //       } else {
+    //         authenticate();
+    //       }
+    //     });
+    //   } else {
+    //     detectFirstView();
+    //   }
+    // });
+    detectFirstView();
   }, []);
 
   const detectFirstView = () => {

@@ -70,6 +70,7 @@ export const Wallet = ({navigation, route}: Iwallet) => {
             balance += dt.final_balance * bitcoinRate;
           }
         });
+        setOverAllBalance(balance);
       });
     }
   };
@@ -82,7 +83,7 @@ export const Wallet = ({navigation, route}: Iwallet) => {
   }, [data]);
   useEffect(() => {
     retrivaeAuthData().then(res => {
-      if (false && res && res.authEnabled) {
+      if (res && res.authEnabled) {
         authenticate().then(res => {
           if (res) {
             retriveCardData().then(res => {
