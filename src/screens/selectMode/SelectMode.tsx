@@ -152,21 +152,21 @@ export const SelectMode = ({navigation}: ISelectMode) => {
 // TODO: get rid of any type
 
 export const CarItem = ({
-                            publicId,
-                            onClick,
-                            isActive,
-                            item,
-                            index,
-                            isSolo,
-                            balance
+  isActive,
+  item,
+  index,
+  isSolo,
+  balance,
+  handlesAddCard,
+  navigation,
 }: {
   isActive: boolean;
   item: any;
   index: number;
   isSolo: boolean;
-  publicId: string;
-  onClick: any;
-    balance:number
+  balance: number;
+  handlesAddCard: boolean;
+  navigation: any;
 }) => {
   const fadeAnim = useRef(new Animated.Value(1)).current; // Initial value for opacity: 0
   const fadeAnimLogo = useRef(new Animated.Value(1)).current; // Initial value for opacity: 0
@@ -222,21 +222,55 @@ export const CarItem = ({
         <Grayscale>
           <Image source={item} />
         </Grayscale>
-      ) : (
+      ) : handlesAddCard ? (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('QrScanner', {
+              prevScreen: 'Wallet',
+              nextScreen: 'Address',
+            })
+          }>
           <View>
-        <Image source={item} />
-              {publicId ?
-              <View style={{
-              position: 'absolute',
+            <Image source={item} />
+            {!handlesAddCard ? (
+              <View
+                style={{
+                  position: 'absolute',
                   bottom: 20,
-              left: 20}}>
-                  <Text style={{fontSize: 13,
-                      fontWeight: "bold",}}>Balance</Text>
-                  <Text style={{fontSize: 13,}}>BTC {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(balance.toFixed(5))}</Text>
-              </View>: null}
+                  left: 20,
+                }}>
+                <Text style={{fontSize: 13, fontWeight: 'bold'}}>Balance</Text>
+                <Text style={{fontSize: 13}}>
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'BTC',
+                  }).format(balance.toFixed(5))}
+                </Text>
+              </View>
+            ) : null}
           </View>
+        </TouchableOpacity>
+      ) : (
+        <View>
+          <Image source={item} />
+          {!handlesAddCard ? (
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                left: 20,
+              }}>
+              <Text style={{fontSize: 13, fontWeight: 'bold'}}>Balance</Text>
+              <Text style={{fontSize: 13}}>
+                {new Intl.NumberFormat('en-US', {
+                  style: 'currency',
+                  currency: 'BTC',
+                }).format(balance.toFixed(5))}
+              </Text>
+            </View>
+          ) : null}
+        </View>
       )}
-
     </View>
   ) : (
     <View

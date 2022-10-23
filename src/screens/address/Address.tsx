@@ -17,8 +17,8 @@ import {ButtonCp} from '../../components/ButtonCP';
 import {images} from '../../assets';
 import FlipView from '../../components/FlipView';
 import {CardOption} from '../selectMode/components/CardOption';
-import bitcoinModule from '../../utils/bitcoin'
-import {storeCardData, retrivaeAuthData} from '../../utils/store'
+import bitcoinModule from '../../utils/bitcoin';
+import {storeCardData, retrivaeAuthData} from '../../utils/store';
 
 const SelectFormWrapper = styled.View`
   flex: 1;
@@ -338,10 +338,10 @@ export const Address = ({navigation, route}: IAddress) => {
                       if (!res || !res.authEnabled) {
                         navigation.navigate('Auth');
                       } else {
-                        navigation.navigate('Wallet')
+                        navigation.navigate('Wallet');
                       }
-                    })
-                  })
+                    });
+                  });
                 } else {
                   setSecret2(currentSecret);
                   setCurrentSecret('');

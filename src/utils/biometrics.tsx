@@ -1,5 +1,4 @@
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
-import { Alert } from 'react-native';
+import ReactNativeBiometrics, {BiometryTypes} from 'react-native-biometrics'
 const rnBiometrics = new ReactNativeBiometrics({allowDeviceCredentials: true})
 export const getAvailableAuth = async () => {
     return new Promise(async (resolve) => {
