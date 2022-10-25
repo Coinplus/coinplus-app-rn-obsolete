@@ -1,11 +1,13 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useLayoutEffect} from 'react';
 import {Image, TouchableOpacity, View, Text} from 'react-native';
 import {images} from '../../assets';
 import {ButtonCp} from '../../components/ButtonCP';
 import styled from 'styled-components/native';
 import colors from '../../utils/colors';
 import {NfcText} from '../address/components/NfcText';
-import {retriveCardData} from '../../utils/store'
+import {readNFC} from '../../utils/NfcManager';
+import { useIsFocused } from "@react-navigation/native";
+
 
 const HomeWrapper = styled.View`
   flex: 1;
@@ -26,12 +28,24 @@ const SecondaryText = styled.Text`
 `;
 
 interface IHome {
+  route: any;
   navigation: any;
 }
 
+export const Home = ({navigation, route}: IHome) => {
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    readNFC().then(res => {
+      if (res) {
+        navigation.navigate('Address', {additionalData: {}, data: res});
+      }
+    });
+  }, [isFocused]);
 
+  useLayoutEffect(() => {
+    console.log('Component is mounted in the DOM');
+  }, []);
 
-export const Home = ({navigation}: IHome) => {
   return (
     <HomeWrapper>
       <Image
