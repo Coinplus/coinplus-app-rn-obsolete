@@ -28,11 +28,10 @@ const SecondaryText = styled.Text`
 `;
 
 interface IHome {
-  route: any;
   navigation: any;
 }
 
-export const Home = ({navigation, route}: IHome) => {
+export const Home = ({navigation}: IHome) => {
   const isFocused = useIsFocused();
   useEffect(() => {
     readNFC().then(res => {

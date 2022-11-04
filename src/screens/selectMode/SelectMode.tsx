@@ -225,10 +225,7 @@ export const CarItem = ({
       ) : handlesAddCard ? (
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('QrScanner', {
-              prevScreen: 'Wallet',
-              nextScreen: 'Address',
-            })
+            navigation.navigate('Home')
           }>
           <View>
             <Image source={item} />

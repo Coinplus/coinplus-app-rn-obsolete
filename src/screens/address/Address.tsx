@@ -243,17 +243,26 @@ export const Address = ({navigation, route}: IAddress) => {
               Your SOLO Card is easy to transport. Put it in your pocket or
               wallet
             </Text>
-            {/*{!isFlipped && (*/}
-            {/*  <ButtonCp*/}
-            {/*    style={{*/}
-            {/*      opacity: address ? 1 : 0,*/}
-            {/*      alignSelf: 'center',*/}
-            {/*      marginBottom: 16,*/}
-            {/*    }}*/}
-            {/*    title="Save"*/}
-            {/*    onPress={() => navigation.navigate('Auth')}*/}
-            {/*  />*/}
-            {/*)}*/}
+            {!isFlipped && (
+              <ButtonCp
+                style={{
+                  opacity: address ? 1 : 0,
+                  alignSelf: 'center',
+                  marginBottom: 16,
+                }}
+                title="Save"
+                onPress={async () => {
+                  await storeCardData({publicId: address});
+                  retrivaeAuthData().then(res => {
+                    if (!res || !res.authEnabled) {
+                      navigation.navigate('Auth');
+                    } else {
+                      navigation.navigate('Wallet');
+                    }
+                  });
+                }}
+              />
+            )}
             <ButtonCp
               style={{
                 opacity: address ? 1 : 0,
@@ -333,7 +342,7 @@ export const Address = ({navigation, route}: IAddress) => {
                   setSecretState(2);
                 } else if (secretState === 3) {
                   bitcoinModule.getWifBTC(secret1, secret2).then(async dt => {
-                    await storeCardData({publicId: address, privateKEy: dt});
+                    await storeCardData({publicId: address, privateKey: dt});
                     retrivaeAuthData().then(res => {
                       if (!res || !res.authEnabled) {
                         navigation.navigate('Auth');
@@ -346,6 +355,11 @@ export const Address = ({navigation, route}: IAddress) => {
                   setSecret2(currentSecret);
                   setCurrentSecret('');
                   setSecretState(3);
+                  bitcoinModule.getWifBTC(secret1, secret2).then(async dt => {
+                    await storeCardData({publicId: address, privateKey: dt});
+                    navigation.navigate('PrivateKey', {publicId: address, privateKey: dt})
+                  });
+
                 }
               }}
             />

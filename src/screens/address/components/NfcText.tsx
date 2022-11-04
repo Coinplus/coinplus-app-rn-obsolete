@@ -14,6 +14,7 @@ const NfcTextWrapper = styled.View`
   justify-content: center;
 `;
 const NfcTextCp = styled.Text`
+  color: black;
   font-family: 'Lexend-Medium';
   font-weight: 300;
   font-size: 14px;

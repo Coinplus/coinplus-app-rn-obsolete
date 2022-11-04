@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {Home} from './src/screens/home/Home';
+import {PrivateKey} from './src/screens/PrivateKeyView/PreivateKey';
 import {SafeAreaView, Text} from 'react-native';
 import {SelectMode} from './src/screens/selectMode/SelectMode';
 import {FormFactor} from './src/screens/formFactor/FormFactor';
@@ -95,6 +96,13 @@ function App() {
           <Stack.Screen
             name="Wallet"
             component={Wallet}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="PrivateKey"
+            component={PrivateKey}
             options={{
               headerShown: false,
             }}
